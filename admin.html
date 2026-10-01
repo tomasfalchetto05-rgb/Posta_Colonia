@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panel de Administración | Parrilla Posta Colonia</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700;900&family=Montserrat:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        :root {
+            --bg-dark: #0d0d0d;
+            --bg-card: #151515;
+            --accent-gold: #d4a359;
+            --accent-gold-light: #f1bf70;
+            --text-light: #f5f5f5;
+            --text-muted: #a0a0a0;
+            --border-color: #262626;
+            --danger: #e74c3c;
+            --font-heading: 'Cinzel', serif;
+            --font-body: 'Montserrat', sans-serif;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: var(--font-body); background-color: var(--bg-dark); color: var(--text-light); padding: 40px 20px; }
+        .container { max-width: 1000px; margin: 0 auto; }
+        
+        h1, h2 { font-family: var(--font-heading); color: var(--accent-gold); }
+        .header-admin { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; border-bottom: 1px solid var(--border-color); padding-bottom: 20px; }
+        .btn-back { color: var(--text-muted); text-decoration: none; font-size: 0.9rem; }
+        .btn-back:hover { color: var(--accent-gold); }
+
+        /* PANTALLA DE LOGIN */
+        .login-wrapper {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 60vh;
+        }
+
+        .login-card {
+            background-color: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 35px;
+            width: 100%;
+            max-width: 400px;
+            text-align: center;
+        }
+
+        .login-card i {
+            font-size: 2.5rem;
+            color: var(--accent-gold);
+            margin-bottom: 15px;
+        }
+
+        .login-card h2 {
+            margin-bottom: 8px;
+            font-size: 1.5rem;
+        }
+
+        .login-card p {
+            color: var(--text-muted);
+            font-size: 0.85rem;
+            margin-bottom: 20px;
+        }
+
+        .error-msg {
+            color: var(--danger);
+            font-size: 0.85rem;
+            margin-top: 10px;
+            display: none;
+        }
+
+        /* CONTENIDO DEL PANEL (OCULTO POR DEFECTO) */
+        #adminContent {
+            display: none;
+        }
+
+        .admin-grid { display: grid; grid-template-columns: 1fr 1.5fr; gap: 30px; }
+        @media (max-width: 768px) { .admin-grid { grid-template-columns: 1fr; } }
+
+        .card { background-color: var(--bg-card); border: 1px solid var(--border-color); border-radius: 12px; padding: 25px; }
+        
+        .form-group { margin-bottom: 15px; }
+        .form-group label { display: block; font-size: 0.85rem; text-transform: uppercase; margin-bottom: 5px; color: var(--text-muted); }
+        .form-control { width: 100%; padding: 10px; background-color: #0d0d0d; border: 1px solid var(--border-color); border-radius: 6px; color: white; }
+        .form-control:focus { outline: none; border-color: var(--accent-gold); }
+
+        .btn-action { background: linear-gradient(135deg, var(--accent-gold), #b38238); color: #0d0d0d; font-weight: 700; border: none; padding: 12px; border-radius: 20px; cursor: pointer; width: 100%; text-transform: uppercase; margin-top: 10px; }
+        .btn-action:hover { background: var(--accent-gold-light); }
+        .btn-cancel { background: #333; color: white; margin-top: 5px; }
+        .btn-logout { background: transparent; border: 1px solid var(--border-color); color: var(--text-muted); padding: 8px 15px; border-radius: 20px; cursor: pointer; font-size: 0.85rem; }
+        .btn-logout:hover { border-color: var(--danger); color: var(--danger); }
+
+        .item-list { display: flex; flex-direction: column; gap: 12px; }
+        .item-card { display: flex; justify-content: space-between; align-items: center; background-color: #0d0d0d; border: 1px solid var(--border-color); border-radius: 8px; padding: 12px 16px; }
+        .item-info h4 { font-size: 1rem; color: white; }
+        .item-info p { font-size: 0.8rem; color: var(--text-muted); }
+        .item-info span { color: var(--accent-gold); font-weight: 700; font-size: 0.9rem; }
+        
+        .item-actions { display: flex; gap: 10px; }
+        .btn-icon { background: none; border: none; color: var(--text-muted); cursor: pointer; font-size: 1.1rem; }
+        .btn-icon.edit:hover { color: var(--accent-gold); }
+        .btn-icon.delete:hover { color: var(--danger); }
+    </style>
+</head>
+<body>
+    <div class="container">
+
+        <!-- VISTA 1: FORMULARIO DE ACCESO / LOGIN -->
+        <div id="loginScreen" class="login-wrapper">
+            <div class="login-card">
+                <i class="fa-solid fa-lock"></i>
+                <h2>Acceso Restringido</h2>
+                <p>Ingresa la contraseña del restaurante para administrar la carta.</p>
+                <form id="loginForm">
+                    <div class="form-group">
+                        <input type="password" id="adminPassword" class="form-control" placeholder="Contraseña de administrador" required>
+                    </div>
+                    <button type="submit" class="btn-action">Ingresar</button>
+                    <p id="errorMsg" class="error-msg">Contraseña incorrecta. Inténtalo de nuevo.</p>
+                </form>
+                <div style="margin-top: 20px;">
+                    <a href="reservas.html" class="btn-back"><i class="fa-solid fa-arrow-left"></i> Volver a la Carta</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- VISTA 2: PANEL DE ADMINISTRACIÓN (PROTEGIDO) -->
+        <div id="adminContent">
+            <div class="header-admin">
+                <div>
+                    <h1>Panel de Administración</h1>
+                    <p style="color: var(--text-muted);">Gestión de carta de platos y bebidas</p>
+                </div>
+                <div style="display: flex; gap: 15px; align-items: center;">
+                    <button class="btn-logout" onclick="logout()"><i class="fa-solid fa-right-from-bracket"></i> Cerrar Sesión</button>
+                    <a href="reservas.html" class="btn-back"><i class="fa-solid fa-arrow-left"></i> Volver a Menú</a>
+                </div>
+            </div>
+
+            <div class="admin-grid">
+                <!-- FORMULARIO DE PRODUCTO -->
+                <div class="card">
+                    <h2 id="formTitle">Agregar Producto</h2>
+                    <form id="productForm" style="margin-top: 15px;">
+                        <input type="hidden" id="productId">
+                        <div class="form-group">
+                            <label>Nombre del Producto</label>
+                            <input type="text" id="pTitle" class="form-control" placeholder="Ej. Ojo de Bife" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Categoría</label>
+                            <select id="pCategory" class="form-control" required>
+                                <option value="entradas">Entradas</option>
+                                <option value="parrilla">Parrilla Tradicional</option>
+                                <option value="cocina">Cocina & Minutas</option>
+                                <option value="postres">Postres</option>
+                                <option value="bebidas">Bebidas</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Precio</label>
+                            <input type="text" id="pPrice" class="form-control" placeholder="Ej. $14.500 o Consultar" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Descripción</label>
+                            <textarea id="pDesc" class="form-control" rows="3" placeholder="Ingredientes o detalles..." required></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label>URL Imagen</label>
+                            <input type="url" id="pImg" class="form-control" placeholder="https://..." required>
+                        </div>
+                        <button type="submit" class="btn-action" id="btnSubmit">Guardar Producto</button>
+                        <button type="button" class="btn-action btn-cancel" id="btnCancel" style="display:none;" onclick="resetForm()">Cancelar Edición</button>
+                    </form>
+                </div>
+
+                <!-- LISTA DE PRODUCTOS -->
+                <div>
+                    <h2>Carta Actual</h2>
+                    <div class="item-list" id="adminList" style="margin-top: 15px;"></div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        // CONTRASEÑA POR DEFECTO (Cámbiala por la que prefiera el restaurante)
+        const ADMIN_PASS = "gotei13";
+
+        // VERIFICAR AUTENTICACIÓN AL CARGAR LA PÁGINA
+        document.addEventListener('DOMContentLoaded', () => {
+            if (sessionStorage.getItem('posta_admin_auth') === 'true') {
+                showAdminPanel();
+            }
+        });
+
+        // CONTROL DEL LOGIN
+        document.getElementById('loginForm').addEventListener('submit', (e) => {
+            e.preventDefault();
+            const inputPass = document.getElementById('adminPassword').value;
+            const errorMsg = document.getElementById('errorMsg');
+
+            if (inputPass === ADMIN_PASS) {
+                sessionStorage.setItem('posta_admin_auth', 'true');
+                errorMsg.style.display = 'none';
+                showAdminPanel();
+            } else {
+                errorMsg.style.display = 'block';
+                document.getElementById('adminPassword').value = '';
+            }
+        });
+
+        function showAdminPanel() {
+            document.getElementById('loginScreen').style.display = 'none';
+            document.getElementById('adminContent').style.display = 'block';
+            renderList();
+        }
+
+        function logout() {
+            sessionStorage.removeItem('posta_admin_auth');
+            document.getElementById('adminContent').style.display = 'none';
+            document.getElementById('loginScreen').style.display = 'flex';
+            document.getElementById('adminPassword').value = '';
+        }
+
+        // GESTIÓN DE PRODUCTOS (LOCALSTORAGE)
+        const initialMenu = [
+            { id: '1', title: 'Empanada de Carne Cortada a Cuchillo', category: 'entradas', price: '$1.800', desc: 'Receta criolla frita o al horno de barro con carne suavemente sazonada.', img: 'https://resizer.glanacion.com/resizer/v2/empanadas-de-carne-cortada-a-cuchillo-con-mix-YTRLESEOGZFU5LU3G4AOBZ2EP4.jpeg?auth=1bc85880de7b6e0e41370aa13090c3d1e8e04fbc6b564b783626d40a493f821f&width=880&height=586&quality=70&smart=true' },
+            { id: '2', title: 'Provoleta Especial "Posta Colonia"', category: 'entradas', price: '$6.500', desc: 'Queso provolone a las brasas con orégano, tomates secos y panceta crocante.', img: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS_bOdqVGnEc_haPpBEU4rNCVIcbFv29lFUsjaT-uNGhrtdFe6Fn1cnWsja&s=10' },
+            { id: '3', title: 'Asado de Tira Premium', category: 'parrilla', price: '$14.500', desc: 'Corte ancho ahumado lentamente con leña de quebracho seleccionado.', img: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSMx_tt80oyaKhwEXhw0Tf1riXp4b1QSAHKjookyk59WiQzIhz2cXTNczk&s=10' },
+            { id: '4', title: 'Vacío Jugoso', category: 'parrilla', price: '$15.200', desc: 'Tierno corte de vacío cocinado suavemente a fuego lento.', img: 'https://invitadoinvierno.com/wp-content/uploads/2021/05/receta-vacio-ternera-adobado-2bis.jpg' },
+            { id: '5', title: 'Flan Mixto Casero', category: 'postres', price: '$3.500', desc: 'Flan tradicional de huevo con abundante dulce de leche y crema batida.', img: 'https://media.a24.com/p/f2bff8e9a5f92d71f53a7e7054c3cbd5/adjuntos/296/imagenes/009/167/0009167419/1200x675/smart/flan-mixto-receta-casera-el-postre-mas-perfecto.png' }
+        ];
+
+        function getProducts() {
+            const data = localStorage.getItem('posta_colonia_menu');
+            if(!data) {
+                localStorage.setItem('posta_colonia_menu', JSON.stringify(initialMenu));
+                return initialMenu;
+            }
+            return JSON.parse(data);
+        }
+
+        function saveProducts(products) {
+            localStorage.setItem('posta_colonia_menu', JSON.stringify(products));
+            renderList();
+        }
+
+        function renderList() {
+            const products = getProducts();
+            const container = document.getElementById('adminList');
+            container.innerHTML = '';
+
+            products.forEach(item => {
+                const div = document.createElement('div');
+                div.className = 'item-card';
+                div.innerHTML = `
+                    <div class="item-info">
+                        <h4>${item.title}</h4>
+                        <p>${item.category.toUpperCase()} | <span>${item.price}</span></p>
+                    </div>
+                    <div class="item-actions">
+                        <button class="btn-icon edit" onclick="editProduct('${item.id}')"><i class="fa-solid fa-pen-to-square"></i></button>
+                        <button class="btn-icon delete" onclick="deleteProduct('${item.id}')"><i class="fa-solid fa-trash"></i></button>
+                    </div>
+                `;
+                container.appendChild(div);
+            });
+        }
+
+        document.getElementById('productForm').addEventListener('submit', (e) => {
+            e.preventDefault();
+            const id = document.getElementById('productId').value;
+            const title = document.getElementById('pTitle').value;
+            const category = document.getElementById('pCategory').value;
+            const price = document.getElementById('pPrice').value;
+            const desc = document.getElementById('pDesc').value;
+            const img = document.getElementById('pImg').value;
+
+            let products = getProducts();
+
+            if (id) {
+                products = products.map(p => p.id === id ? { id, title, category, price, desc, img } : p);
+            } else {
+                products.push({ id: Date.now().toString(), title, category, price, desc, img });
+            }
+
+            saveProducts(products);
+            resetForm();
+        });
+
+        function editProduct(id) {
+            const p = getProducts().find(prod => prod.id === id);
+            if (!p) return;
+            document.getElementById('productId').value = p.id;
+            document.getElementById('pTitle').value = p.title;
+            document.getElementById('pCategory').value = p.category;
+            document.getElementById('pPrice').value = p.price;
+            document.getElementById('pDesc').value = p.desc;
+            document.getElementById('pImg').value = p.img;
+
+            document.getElementById('formTitle').textContent = 'Editar Producto';
+            document.getElementById('btnSubmit').textContent = 'Actualizar Producto';
+            document.getElementById('btnCancel').style.display = 'block';
+        }
+
+        function deleteProduct(id) {
+            if (confirm('¿Seguro que deseas eliminar este elemento?')) {
+                const products = getProducts().filter(p => p.id !== id);
+                saveProducts(products);
+            }
+        }
+
+        function resetForm() {
+            document.getElementById('productForm').reset();
+            document.getElementById('productId').value = '';
+            document.getElementById('formTitle').textContent = 'Agregar Producto';
+            document.getElementById('btnSubmit').textContent = 'Guardar Producto';
+            document.getElementById('btnCancel').style.display = 'none';
+        }
+    </script>
+</body>
+</html>

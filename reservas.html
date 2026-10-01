@@ -1,0 +1,642 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reservas y Menú | Parrilla Posta Colonia</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700;900&family=Montserrat:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <!-- FontAwesome icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    
+    <style>
+        :root {
+            --bg-dark: #0d0d0d;
+            --bg-card: #151515;
+            --accent-gold: #d4a359;
+            --accent-gold-light: #f1bf70;
+            --text-light: #f5f5f5;
+            --text-muted: #a0a0a0;
+            --border-color: #262626;
+            --font-heading: 'Cinzel', serif;
+            --font-body: 'Montserrat', sans-serif;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background-color: var(--bg-dark);
+            color: var(--text-light);
+            font-family: var(--font-body);
+            line-height: 1.6;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        /* Header / Navbar */
+        header {
+            background-color: rgba(13, 13, 13, 0.95);
+            border-bottom: 1px solid var(--border-color);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            padding: 15px 5%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-family: var(--font-heading);
+            font-size: 1.5rem;
+            color: var(--accent-gold);
+            text-decoration: none;
+            font-weight: 700;
+            letter-spacing: 2px;
+        }
+
+        nav a {
+            color: var(--text-light);
+            text-decoration: none;
+            margin-left: 20px;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: color 0.3s;
+        }
+
+        nav a:hover, nav a.active {
+            color: var(--accent-gold);
+        }
+
+        /* Contenedor Principal */
+        .main-container {
+            max-width: 1200px;
+            margin: 40px auto;
+            padding: 0 20px;
+            flex: 1;
+        }
+
+        .section-title {
+            text-align: center;
+            font-family: var(--font-heading);
+            font-size: 2.2rem;
+            color: var(--accent-gold);
+            margin-bottom: 10px;
+        }
+
+        .section-subtitle {
+            text-align: center;
+            color: var(--text-muted);
+            margin-bottom: 40px;
+            font-size: 0.95rem;
+        }
+
+        /* Sección de Menú Completo */
+        .menu-section {
+            background-color: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 40px 30px;
+            margin-bottom: 50px;
+        }
+
+        .menu-categories {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+
+        .tab-btn {
+            background: transparent;
+            border: 1px solid var(--border-color);
+            color: var(--text-muted);
+            padding: 8px 20px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-family: var(--font-body);
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            transition: all 0.3s ease;
+        }
+
+        .tab-btn.active, .tab-btn:hover {
+            border-color: var(--accent-gold);
+            color: var(--accent-gold);
+            background-color: rgba(212, 163, 89, 0.05);
+        }
+
+        .full-menu-list {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .menu-item-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            border-bottom: 1px dashed var(--border-color);
+            padding-bottom: 15px;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        .menu-item-row:hover {
+            transform: translateX(5px);
+        }
+
+        .item-details h4 {
+            font-family: var(--font-heading);
+            font-size: 1.1rem;
+            color: var(--text-light);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .item-details h4 i {
+            font-size: 0.8rem;
+            color: var(--accent-gold);
+            opacity: 0.7;
+        }
+
+        .item-details p {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            margin-top: 5px;
+        }
+
+        .item-dots {
+            flex: 1;
+            margin: 0 15px;
+        }
+
+        .item-price {
+            font-family: var(--font-heading);
+            font-weight: 700;
+            color: var(--accent-gold);
+            font-size: 1.1rem;
+            white-space: nowrap;
+        }
+
+        /* Sección de Formulario de Reserva */
+        .reservation-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 40px;
+            background-color: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 40px;
+        }
+
+        @media (max-width: 768px) {
+            .reservation-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .reservation-info {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .info-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+
+        .info-item i {
+            color: var(--accent-gold);
+            font-size: 1.2rem;
+            margin-top: 5px;
+        }
+
+        .info-item h3 {
+            font-size: 1rem;
+            margin-bottom: 5px;
+        }
+
+        .info-item p {
+            color: var(--text-muted);
+            font-size: 0.85rem;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 8px;
+            color: var(--text-muted);
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 12px 15px;
+            background-color: var(--bg-dark);
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            color: var(--text-light);
+            font-family: var(--font-body);
+            font-size: 0.95rem;
+            transition: border-color 0.3s;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: var(--accent-gold);
+        }
+
+        .btn-submit {
+            width: 100%;
+            background: linear-gradient(135deg, var(--accent-gold), #b38238);
+            color: #0d0d0d;
+            font-weight: 700;
+            font-family: var(--font-body);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            padding: 15px;
+            border: none;
+            border-radius: 30px;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .btn-submit:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(212, 163, 89, 0.3);
+        }
+
+        /* Modal para ver imagen del plato */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.85);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+        }
+
+        .modal-overlay.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .modal-content {
+            background-color: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            max-width: 500px;
+            width: 90%;
+            overflow: hidden;
+            position: relative;
+            transform: scale(0.9);
+            transition: transform 0.3s ease;
+        }
+
+        .modal-overlay.active .modal-content {
+            transform: scale(1);
+        }
+
+        .modal-img {
+            width: 100%;
+            height: 250px;
+            object-fit: cover;
+        }
+
+        .modal-body {
+            padding: 20px;
+        }
+
+        .modal-body h3 {
+            font-family: var(--font-heading);
+            color: var(--accent-gold);
+            font-size: 1.4rem;
+            margin-bottom: 10px;
+        }
+
+        .modal-body p {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            margin-bottom: 15px;
+        }
+
+        .modal-price {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: var(--text-light);
+        }
+
+        .close-modal {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: rgba(0, 0, 0, 0.6);
+            color: white;
+            border: none;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Footer */
+        footer {
+            margin-top: 60px;
+            padding: 25px;
+            text-align: center;
+            border-top: 1px solid var(--border-color);
+            color: var(--text-muted);
+            font-size: 0.8rem;
+        }
+
+        footer a {
+            color: var(--border-color);
+            text-decoration: none;
+            font-size: 0.75rem;
+            transition: color 0.3s;
+        }
+
+        footer a:hover {
+            color: var(--accent-gold);
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Header (Navegación limpia sin botón de admin) -->
+    <header>
+        <a href="index.html" class="logo">POSTA COLONIA</a>
+        <nav>
+            <a href="index.html">Inicio</a>
+            <a href="reservas.html" class="active">Carta & Reservas</a>
+        </nav>
+    </header>
+
+    <div class="main-container">
+        
+        <!-- SECCIÓN MENÚ COMPLETO -->
+        <section class="menu-section">
+            <h2 class="section-title">Nuestra Carta</h2>
+            <p class="section-subtitle">Selección especial a las brasas y cocina criolla. Haz clic en un plato para ver su imagen.</p>
+
+            <div class="menu-categories">
+                <button class="tab-btn active" onclick="filterMenu('all', event)">Todos</button>
+                <button class="tab-btn" onclick="filterMenu('entradas', event)">Entradas</button>
+                <button class="tab-btn" onclick="filterMenu('parrilla', event)">Parrilla Tradicional</button>
+                <button class="tab-btn" onclick="filterMenu('cocina', event)">Cocina & Minutas</button>
+                <button class="tab-btn" onclick="filterMenu('postres', event)">Postres</button>
+                <button class="tab-btn" onclick="filterMenu('bebidas', event)">Bebidas</button>
+            </div>
+
+            <div class="full-menu-list">
+                <!-- Se puebla dinámicamente con JavaScript desde localStorage -->
+            </div>
+        </section>
+
+        <!-- SECCIÓN FORMULARIO RESERVAS -->
+        <section>
+            <h2 class="section-title">Reserva tu Mesa</h2>
+            <p class="section-subtitle">Asegura tu lugar para disfrutar de una experiencia gastronómica única.</p>
+
+            <div class="reservation-grid">
+                
+                <div class="reservation-info">
+                    <div class="info-item">
+                        <i class="fa-solid fa-clock"></i>
+                        <div>
+                            <h3>Horarios de Atención</h3>
+                            <p>Martes a Domingo: 12:00 - 15:30 hs / 20:00 - 00:30 hs</p>
+                        </div>
+                    </div>
+
+                    <div class="info-item">
+                        <i class="fa-solid fa-utensils"></i>
+                        <div>
+                            <h3>Políticas de Reserva</h3>
+                            <p>Mantenemos la tolerancia de mesa por 15 minutos. Si tienes algún requerimiento de ubicación (Salón Principal o Galería) indícalo en las notas.</p>
+                        </div>
+                    </div>
+
+                    <div class="info-item">
+                        <i class="fa-brands fa-whatsapp"></i>
+                        <div>
+                            <h3>Confirmación Directa</h3>
+                            <p>Al enviar el formulario, se abrirá WhatsApp con el mensaje estructurado para que el equipo confirme la disponibilidad de tu mesa al instante.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <form id="reservationForm">
+                    <div class="form-group">
+                        <label for="nombre">Nombre Completo</label>
+                        <input type="text" id="nombre" name="nombre" class="form-control" required placeholder="Ej: Juan Pérez">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="telefono">Teléfono de Contacto</label>
+                        <input type="tel" id="telefono" name="telefono" class="form-control" required placeholder="Ej: 3468 614048">
+                    </div>
+
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                        <div class="form-group">
+                            <label for="fecha">Fecha</label>
+                            <input type="date" id="fecha" name="fecha" class="form-control" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="hora">Hora</label>
+                            <select id="hora" name="hora" class="form-control" required>
+                                <option value="">Seleccionar...</option>
+                                <option value="12:30">12:30 hs</option>
+                                <option value="13:00">13:00 hs</option>
+                                <option value="13:30">13:30 hs</option>
+                                <option value="21:00">21:00 hs</option>
+                                <option value="21:30">21:30 hs</option>
+                                <option value="22:00">22:00 hs</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                        <div class="form-group">
+                            <label for="comensales">Personas</label>
+                            <input type="number" id="comensales" name="comensales" min="1" max="20" class="form-control" value="2" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="ubicacion">Preferencia</label>
+                            <select id="ubicacion" name="ubicacion" class="form-control">
+                                <option value="Indiferente">Indiferente</option>
+                                <option value="Salón Principal">Salón Principal</option>
+                                <option value="Galería Exterior">Galería Exterior</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="notas">Notas / Comentarios Especiales</label>
+                        <textarea id="notas" name="notas" class="form-control" rows="2" placeholder="Silla de bebé, intolerancias alimentarias, festejo de cumpleaños..."></textarea>
+                    </div>
+
+                    <button type="submit" class="btn-submit">
+                        <i class="fa-brands fa-whatsapp"></i> Confirmar por WhatsApp
+                    </button>
+                </form>
+
+            </div>
+        </section>
+
+    </div>
+
+    <!-- MODAL DE PLATO -->
+    <div class="modal-overlay" id="plateModal">
+        <div class="modal-content">
+            <button class="close-modal" onclick="closeModal()"><i class="fa-solid fa-xmark"></i></button>
+            <img src="" id="modalImg" class="modal-img" alt="Plato">
+            <div class="modal-body">
+                <h3 id="modalTitle">Título del Plato</h3>
+                <p id="modalDesc">Descripción extendida sobre los ingredientes y estilo de preparación del plato seleccionado.</p>
+                <div id="modalPrice" class="modal-price">$0</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- FOOTER DISCRETO PARA ACCESO PRIVADO -->
+    <footer>
+        <p>&copy; 2026 Parrilla Posta Colonia. Todos los derechos reservados.</p>
+        <p style="margin-top: 8px;">
+            <a href="admin.html">
+                <i class="fa-solid fa-lock" style="font-size: 0.7rem;"></i> Acceso Personal
+            </a>
+        </p>
+    </footer>
+
+    <!-- SCRIPT DE INTERACCIÓN DINÁMICA -->
+    <script>
+        const initialMenu = [
+            { id: '1', title: 'Empanada de Carne Cortada a Cuchillo', category: 'entradas', price: '$1.800', desc: 'Receta criolla frita o al horno de barro con carne suavemente sazonada.', img: 'https://resizer.glanacion.com/resizer/v2/empanadas-de-carne-cortada-a-cuchillo-con-mix-YTRLESEOGZFU5LU3G4AOBZ2EP4.jpeg?auth=1bc85880de7b6e0e41370aa13090c3d1e8e04fbc6b564b783626d40a493f821f&width=880&height=586&quality=70&smart=true' },
+            { id: '2', title: 'Provoleta Especial "Posta Colonia"', category: 'entradas', price: '$6.500', desc: 'Queso provolone a las brasas con orégano, tomates secos y panceta crocante.', img: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS_bOdqVGnEc_haPpBEU4rNCVIcbFv29lFUsjaT-uNGhrtdFe6Fn1cnWsja&s=10' },
+            { id: '3', title: 'Asado de Tira Premium', category: 'parrilla', price: '$14.500', desc: 'Corte ancho ahumado lentamente con leña de quebracho seleccionado.', img: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSMx_tt80oyaKhwEXhw0Tf1riXp4b1QSAHKjookyk59WiQzIhz2cXTNczk&s=10' },
+            { id: '4', title: 'Vacío Jugoso', category: 'parrilla', price: '$15.200', desc: 'Tierno corte de vacío cocinado suavemente a fuego lento.', img: 'https://invitadoinvierno.com/wp-content/uploads/2021/05/receta-vacio-ternera-adobado-2bis.jpg' },
+            { id: '5', title: 'Flan Mixto Casero', category: 'postres', price: '$3.500', desc: 'Flan tradicional de huevo con abundante dulce de leche y crema batida.', img: 'https://media.a24.com/p/f2bff8e9a5f92d71f53a7e7054c3cbd5/adjuntos/296/imagenes/009/167/0009167419/1200x675/smart/flan-mixto-receta-casera-el-postre-mas-perfecto.png' }
+        ];
+
+        function loadMenu() {
+            const data = localStorage.getItem('posta_colonia_menu');
+            const items = data ? JSON.parse(data) : initialMenu;
+            if (!data) localStorage.setItem('posta_colonia_menu', JSON.stringify(initialMenu));
+
+            const container = document.querySelector('.full-menu-list');
+            container.innerHTML = '';
+
+            items.forEach(item => {
+                const row = document.createElement('div');
+                row.className = `menu-item-row category-item ${item.category}`;
+                row.setAttribute('data-img', item.img);
+                row.innerHTML = `
+                    <div class="item-details">
+                        <h4>${item.title} <i class="fa-solid fa-eye"></i></h4>
+                        <p>${item.desc}</p>
+                    </div>
+                    <div class="item-dots"></div>
+                    <div class="item-price">${item.price}</div>
+                `;
+                
+                row.addEventListener('click', () => {
+                    modalTitle.textContent = item.title;
+                    modalDesc.textContent = item.desc;
+                    modalPrice.textContent = item.price;
+                    modalImg.src = item.img;
+                    modal.classList.add('active');
+                });
+
+                container.appendChild(row);
+            });
+        }
+
+        function filterMenu(category, e) {
+            const items = document.querySelectorAll('.category-item');
+            const buttons = document.querySelectorAll('.tab-btn');
+
+            buttons.forEach(btn => btn.classList.remove('active'));
+            e.target.classList.add('active');
+
+            items.forEach(item => {
+                if (category === 'all' || item.classList.contains(category)) {
+                    item.style.display = 'flex';
+                } else {
+                    item.style.display = 'none';
+                }
+            });
+        }
+
+        const modal = document.getElementById('plateModal');
+        const modalImg = document.getElementById('modalImg');
+        const modalTitle = document.getElementById('modalTitle');
+        const modalDesc = document.getElementById('modalDesc');
+        const modalPrice = document.getElementById('modalPrice');
+
+        function closeModal() {
+            modal.classList.remove('active');
+        }
+
+        modal.addEventListener('click', (e) => {
+            if (e.target === modal) closeModal();
+        });
+
+        document.getElementById('reservationForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            const form = e.currentTarget;
+            const mensaje = [
+                'Hola, quiero confirmar mi reserva en Parrilla Posta Colonia.',
+                '',
+                `Nombre: ${form.nombre.value.trim()}`,
+                `Teléfono: ${form.telefono.value.trim()}`,
+                `Fecha: ${form.fecha.value}`,
+                `Hora: ${form.hora.value}`,
+                `Comensales: ${form.comensales.value}`,
+                `Ubicación: ${form.ubicacion.value}`,
+                `Notas: ${form.notas.value.trim() || 'Sin notas especiales'}`
+            ].join('\n');
+
+            window.open(`https://wa.me/5493468614048?text=${encodeURIComponent(mensaje)}`, '_blank');
+            form.reset();
+        });
+
+        // Cargar carta al iniciar la página
+        loadMenu();
+    </script>
+</body>
+</html>
